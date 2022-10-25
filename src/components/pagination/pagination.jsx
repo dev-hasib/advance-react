@@ -22,11 +22,11 @@ class Pagination extends Component {
     render() {
         return (
             <div className='d-flex justify-content-around my-4 align-items-center'>
-                <button className='btn btn-warning' onClick={this.props.prevPage}>previous</button>
+                <button className='btn btn-warning' disabled={this.props.currentPage === 1} onClick={this.props.prevPage}>previous</button>
                 <div className="text-center">
                     {this.state.isEditable ? (
                         <>
-                            <input value={this.state.currentPage} type='number' onDoubleClick={() => this.setState({ isEditable: !this.state.isEditable })} onChange={this.handleChange} />
+                            <input min={1} max={this.props.totalPage} value={this.state.currentPage} type='number' onDoubleClick={() => this.setState({ isEditable: !this.state.isEditable })} onChange={this.handleChange} />
                             <p style={{ 'textDecoration': 'underline', 'cursor': 'pointer' }} onClick={this.jumpTo} className='text-center'>Jump to </p>
                         </>
                     ) : (
@@ -43,7 +43,7 @@ class Pagination extends Component {
                         </p>
                     )}
                 </div>
-                <button className='btn btn-warning' onClick={this.props.nextPage}>next</button>
+                <button className='btn btn-warning' disabled={this.props.totalPage === this.props.currentPage} onClick={this.props.nextPage}>next</button>
 
             </div>
         )

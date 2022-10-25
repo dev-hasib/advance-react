@@ -21,10 +21,10 @@ export default class App extends Component {
         page: 1,
         searchTerm: '',
         resultFound: 0,
-        totalPage: 0
+        totalPage: 1
     }
     componentDidMount = async () => {
-        const url = `${process.env.REACT_APP_BASE_URL}?category=${this.state.category}&apiKey=${process.env.REACT_APP_API_KEY}&pageSize=10&page=${this.state.page}`
+        const url = `${process.env.REACT_APP_BASE_URL}?category=${this.state.category}&apiKey=${process.env.REACT_APP_API_KEY}&pageSize=10&page=${this.state.page}&language=en`
         const data = await axios.get(url)
         console.log(data);
         this.setState({
@@ -33,19 +33,22 @@ export default class App extends Component {
             totalPage: data.data.totalResults / 10
         })
     }
+
     handleCategory = category => {
-        this.setState({ category })
+        this.setState({ category, page: 1 })
     }
+
     componentDidUpdate = async (prevPro, prevState) => {
         if (prevState.category !== this.state.category || prevState.searchTerm !== this.state.searchTerm || prevState.page !== this.state.page) {
 
-            const url = `${process.env.REACT_APP_BASE_URL}?category=${this.state.category}&apiKey=${process.env.REACT_APP_API_KEY}&pageSize=10&q=${this.state.searchTerm}&page=${this.state.page}`
+            const url = `${process.env.REACT_APP_BASE_URL}?category=${this.state.category}&apiKey=${process.env.REACT_APP_API_KEY}&pageSize=10&q=${this.state.searchTerm}&page=${this.state.page}&language=en`
             const data = await axios.get(url)
             console.log(data.data)
             this.setState({
                 newses: data.data.articles,
                 resultFound: data.data.totalResults,
-                totalPage: data.data.totalResults / 10
+                totalPage: Math.floor(data.data.totalResults / 10),
+                searchTerm: '',
             })
         }
     }
@@ -73,9 +76,18 @@ export default class App extends Component {
             <div className='container'>
                 <div className="row">
                     <div className="col-sm-6 offset-md-3">
-                        <Header searchValue={this.searchValue} category={this.state.category} handleCategory={this.handleCategory} />
+                        <Header
+                            searchValue={this.searchValue}
+                            category={this.state.category}
+                            handleCategory={this.handleCategory} /
+                        >
                         {this.state.newses.length === 0 && <Loading />}
-                        <ResultRepresent foundResult={this.state.resultFound} currentPage={this.state.page} foundPage={this.state.totalPage} />
+
+                        <ResultRepresent
+                            foundResult={this.state.resultFound}
+                            currentPage={this.state.page}
+                            foundPage={this.state.totalPage}
+                        />
                         <NewsList newsList={this.state.newses} />
                         <Pagination
                             currentPage={this.state.page}

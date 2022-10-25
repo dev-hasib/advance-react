@@ -47,7 +47,7 @@ const NewsList = ({ newsList }) => {
     return (
         <div>
             {
-                (newsList && newsList.length === 0) && <h2>Data Not Found .....</h2>
+                (newsList && newsList.length === 0) && setTimeout(() => <h2>Data Not Found .....</h2>, 10000)
             }
             {
                 newsList && newsList.length > 0 && newsList.map(item => <NewsItem key={item.title} news={item} />)
